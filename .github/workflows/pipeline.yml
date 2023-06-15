@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: checking review system
+on:
+  push:
+    branches: main
+jobs:
+  review:
+    runs-on: self-hosted
+    environment: review
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+ 
+      - name: azure view deployment changes
+        run: az deployment group what-if --resource-group newrg --template-file apim.bicep
+   
+  Dev:
+    runs-on: self-hosted
+    environment: Dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+ 
+      - name: azure view deployment changes
+        run: az deployment group create --resource-group newrg --template-file apim.bicep
+    
+  
+  QA:
+    runs-on: self-hosted
+    environment: QA
+    needs: DEV
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+          
+      - name: create QA folder
+        run: mkdir QA
+      
+  Pre-pod:
+    runs-on: self-hosted
+    environment: Pre-pod
+    needs: QA
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+          
+      - name: create pre-prod folder
+        run: mkdir pre-prod
+     
+     
+     
+          
+
+
+
